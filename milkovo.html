@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>milkovo</title>
+    <style>
+        body {
+            background-color: #B2DFFC; /* 淡淡的宝宝蓝 */
+            color: #FFFFFF;
+            font-family: 'pixel', sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        @font-face {
+            font-family: 'pixel';
+            src: url('https://cdn.jsdelivr.net/gh/zenozeng/fonts/bitmap/dot.ttf');
+        }
+        .container {
+            max-width: 400px;
+            margin: auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
+        }
+        .question {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        .options button {
+            background-color: #ffffff;
+            color: #70A8FF;
+            font-size: 16px;
+            border: none;
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .options button:hover {
+            background-color: #dcecff;
+        }
+        #finalText {
+            font-size: 22px;
+            font-weight: bold;
+            display: none;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="questionArea">
+        <p class="question" id="questionText">你今天心情怎么样ovo？</p >
+        <div class="options" id="optionsArea">
+            <button onclick="nextQuestion('A')">很好</button>
+            <button onclick="nextQuestion('B')">还行吧</button>
+            <button onclick="nextQuestion('C')">有点累</button>
+        </div>
+    </div>
+
+    <p id="finalText"></p >
+</div>
+
+<script>
+    let currentStep = "Q1";
+
+    const questions = {
+        "Q1": {
+            text: "你今天心情怎么样ovo？",
+            options: { A: "Q2A", B: "Q2B", C: "Q2C" }
+        },
+        "Q2A": {
+            text: "那你现在是不是感觉整个人都很轻松？",
+            options: { A: "Q3A", B: "Q3B" }
+        },
+        "Q2B": {
+            text: "那我问你个好玩的，你觉得今天有什么让你开心的事吗？",
+            options: { A: "Q3A", B: "Q3C" }
+        },
+        "Q2C": {
+            text: "啊…那你需要一点什么来恢复活力吗O.o？",
+            options: { A: "Q3D", B: "Q3C" }
+        },
+        "Q3A": {
+            text: "哇，那如果现在有个小奖励，是不是会更开心ouo！",
+            options: { A: "Q4A", B: "Q4B" }
+        },
+        "Q3B": {
+            text: "那有没有什么东西可以让你瞬间放松一点？",
+            options: { A: "Q4C", B: "Q4D" }
+        },
+        "Q3C": {
+            text: "那…要不要我送你一个小秘密？",
+            options: { A: "Q4E", B: "Q4F" }
+        },
+        "Q3D": {
+            text: "要不然…来点甜甜的能量补充一下OwO？",
+            options: { A: "Q4G", B: "Q4H" }
+        },
+        "Q4A": {
+            text: "那如果是一个又甜又好喝的奖励呢？",
+            options: { A: "FINAL", B: "FINAL" }
+        },
+        "Q4B": {
+            text: "可是我想给你一点额外的小幸福，可以吗ToT？",
+            options: { A: "FINAL", B: "Q4F" }
+        },
+        "Q4C": {
+            text: "比如…一杯温暖的饮料？",
+            options: { A: "FINAL", B: "Q4F" }
+        },
+        "Q4D": {
+            text: "那我只能自己偷偷开心了…（可怜巴巴脸）",
+            options: { A: "Q4E", B: "Q4E" }
+        },
+        "Q4E": {
+            text: "秘密就是…如果你现在顺路带点东西回来给我，我会超级超级开心QaQ！",
+            options: { A: "FINAL", B: "FINAL" }
+        },
+        "Q4F": {
+            text: "好啦，不骗你了！我就是想问你个问题而已～TvT",
+            options: { A: "FINAL", B: "FINAL" }
+        },
+        "Q4G": {
+            text: "你觉得巧克力奶茶怎么样？",
+            options: { A: "FINAL", B: "FINAL" }
+        },
+        "Q4H": {
+            text: "你不喜欢甜的？那…微甜的呢？",
+            options: { A: "FINAL", B: "FINAL" }
+        },
+    };
+
+    function nextQuestion(choice) {
+        let nextStep = questions[currentStep].options[choice];
+        if (nextStep === "FINAL") {
+            showFinalText();
+        } else {
+            currentStep = nextStep;
+            document.getElementById("questionText").textContent = questions[currentStep].text;
+            updateOptions(nextStep);
+        }
+    }
+
+    function updateOptions(step) {
+        let optionsArea = document.getElementById("optionsArea");
+        optionsArea.innerHTML = "";
+        for (let choice in questions[step].options) {
+            let button = document.createElement("button");
+            button.textContent = choice === "A" ? "A. " + getOptionText(step, "A") : "B. " + getOptionText(step, "B");
+            button.onclick = () => nextQuestion(choice);
+            optionsArea.appendChild(button);
+        }
+    }
+
+    function getOptionText(step, choice) {
+        return {
+            "Q2A": { A: "当然", B: "也没有很轻松" },
+            "Q2B": { A: "有的！", B: "还真没有" },
+            "Q2C": { A: "需要", B: "还好吧" },
+            "Q3A": { A: "当然", B: "其实我已经够开心了..." },
+            "Q3B": { A: "可能有", B: "没想过" },
+            "Q3C": { A: "什么秘密？", B: "不要，感觉你要套路我" },
+            "Q3D": { A: "听起来不错", B: "甜的？有点犹豫" },
+            "Q4A": { A: "哇，听起来很棒！", B: "甜的吗？不会是糖果吧" },
+            "Q4B": { A: "哈哈，可以！", B: "你到底想干嘛" },
+            "Q4C": { A: "哦？继续说说", B: "你不会要让我请你喝吧？" },
+            "Q4D": { A: "好吧，你想说什么？", B: "别装可怜...快说" },
+            "Q4E": { A: "什么东西？", B: "我就知道" },
+            "Q4F": { A: "什么问题？", B: "你老实交代" },
+            "Q4G": { A: "听起来不错！", B: "你是不是想喝？" },
+            "Q4H": { A: "这个可以！", B: "你到底想说什么？" }
+        }[step][choice];
+    }
+
+    function showFinalText() {
+        document.getElementById("questionArea").style.display = "none";
+        let finalText = "那……你可以带奶茶回家给我喝吗ovo";
+        let finalTextArea = document.getElementById("finalText");
+        finalTextArea.style.display = "block";
+        let i = 0;
+        function typeWriter() {
+            if (i < finalText.length) {
+                finalTextArea.textContent += finalText[i++];
+                setTimeout(typeWriter, 150);
+            }
+        }
+        typeWriter();
+    }
+</script>
+
+</body>
+</html>
